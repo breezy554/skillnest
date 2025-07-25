@@ -2,7 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Inter', sans-serif;
-  @apply bg-gray-50 text-gray-800;
+/* 🌐 Base typography & layout improvements */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-800 leading-relaxed tracking-tight;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-gray-900;
+  }
+
+  a {
+    @apply text-purple-600 hover:text-purple-800 transition;
+  }
+
+  button {
+    @apply transition focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2;
+  }
+}
+
+/* 🧩 Custom components (reusable styling) */
+@layer components {
+  .btn-primary {
+    @apply bg-purple-700 text-white px-5 py-2 rounded-md font-medium hover:bg-purple-800;
+  }
+
+  .btn-secondary {
+    @apply border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-100;
+  }
+
+  .card {
+    @apply bg-white border border-gray-200 rounded-xl p-6 shadow-sm;
+  }
+
+  .prose-content {
+    @apply prose prose-gray max-w-none;
+  }
 }

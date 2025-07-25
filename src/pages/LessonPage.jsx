@@ -1,17 +1,23 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { modules } from "../data/modules";
-import { markLessonComplete, moduleProgressPct, isLessonComplete } from "../lib/progress";
 import LessonSidebar from "../components/LessonSidebar";
 import ProgressBar from "../components/ProgressBar";
 import QuizBlock from "../components/QuizBlock";
+import { makeLessonKey } from "../lib/progress";
+import { useAuth } from "../context/AuthContext";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function LessonPage() {
   const { moduleId, lessonId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const mod = modules[moduleId];
   const lessonIndex = useMemo(() => mod?.lessons.findIndex(l => l.id === lessonId), [mod, lessonId]);
+
+  const [isCompleted, setIsCompleted] = useState(false);
 
   if (!mod || lessonIndex === -1) {
     return (
@@ -27,10 +33,31 @@ export default function LessonPage() {
   const isLast = lessonIndex === totalLessons - 1;
   const isFirst = lessonIndex === 0;
 
-  const progress = moduleProgressPct(mod);
+  const progress = 0; // Progress bar can be made dynamic later per module
 
-  const handleMarkComplete = () => {
-    markLessonComplete(moduleId, lesson.id);
+  const handleMarkComplete = async () => {
+    if (!user) return;
+
+    const key = makeLessonKey(moduleId, lesson.id);
+    const ref = doc(db, "users", user.uid);
+
+    try {
+      const snap = await getDoc(ref);
+      const current = snap.exists() ? snap.data().progress || {} : {};
+
+      await setDoc(
+        ref,
+        {
+          progress: { ...current, [key]: true },
+          lastLesson: { moduleId, lessonId },
+        },
+        { merge: true }
+      );
+
+      setIsCompleted(true);
+    } catch (err) {
+      console.error("Failed to save progress", err);
+    }
   };
 
   const goPrev = () => {
@@ -94,12 +121,12 @@ export default function LessonPage() {
                 onClick={handleMarkComplete}
                 className={[
                   "px-5 py-2 rounded-md font-semibold transition",
-                  isLessonComplete(moduleId, lesson.id)
+                  isCompleted
                     ? "bg-green-600 text-white hover:bg-green-700"
                     : "bg-purple-700 text-white hover:bg-purple-800"
                 ].join(" ")}
               >
-                {isLessonComplete(moduleId, lesson.id) ? "Completed ✔" : "Mark Complete"}
+                {isCompleted ? "Completed ✔" : "Mark Complete"}
               </button>
             </div>
           </article>
