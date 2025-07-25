@@ -1,4 +1,3 @@
-// src/pages/LessonPage.jsx
 import { useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { modules } from "../data/modules";
@@ -12,10 +11,7 @@ export default function LessonPage() {
   const navigate = useNavigate();
 
   const mod = modules[moduleId];
-  const lessonIndex = useMemo(
-    () => mod?.lessons.findIndex(l => l.id === lessonId),
-    [mod, lessonId]
-  );
+  const lessonIndex = useMemo(() => mod?.lessons.findIndex(l => l.id === lessonId), [mod, lessonId]);
 
   if (!mod || lessonIndex === -1) {
     return (
@@ -48,14 +44,14 @@ export default function LessonPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sticky header with progress */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm transition">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">{mod.name}</h1>
-            <p className="text-xs text-gray-500">Lesson {lessonIndex + 1} of {totalLessons}</p>
+            <h1 className="text-2xl font-semibold text-gray-900">{mod.name}</h1>
+            <p className="text-sm text-gray-500">Lesson {lessonIndex + 1} of {totalLessons}</p>
           </div>
-          <div className="w-64">
-          <ProgressBar value={progress} />
+          <div className="w-full sm:w-64">
+            <ProgressBar value={progress} />
           </div>
         </div>
       </header>
@@ -63,17 +59,17 @@ export default function LessonPage() {
       <div className="max-w-6xl mx-auto flex">
         <LessonSidebar module={mod} />
 
-        <main className="flex-1 p-6">
-          <article className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{lesson.title}</h2>
+        <main className="flex-1 px-4 sm:px-6 py-8">
+          <article className="bg-white border border-gray-200 rounded-xl p-6 shadow-md transition-all duration-300 hover:shadow-lg">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">{lesson.title}</h2>
 
-            <div className="prose prose-gray max-w-none">
+            <div className="prose prose-gray max-w-none mb-6">
               {lesson.body.map((p, i) => (
-                <p key={i} className="text-gray-700 leading-relaxed mb-4">{p}</p>
+                <p key={i} className="text-gray-700 leading-relaxed">{p}</p>
               ))}
             </div>
 
-            <QuizBlock quiz={lesson.quiz} />
+            <QuizBlock quizzes={lesson.quizzes} />
 
             <div className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex gap-3">

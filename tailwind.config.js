@@ -1,23 +1,23 @@
-/* eslint-env node */
-
-module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.{js,jsx}'
-  ],
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-      },
       colors: {
-        primary: {
-          DEFAULT: '#7e22ce', // purple-700
-          light: '#c084fc',   // purple-300
-          dark: '#6b21a8'     // purple-800
-        }
-      }
-    }
+        brand: {
+          light: '#E0E7FF',
+          DEFAULT: '#6366F1',
+          dark: '#4338CA',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+      },
+    },
   },
-  plugins: []
-};
+  plugins: [
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
+}
